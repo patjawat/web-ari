@@ -42,15 +42,6 @@ io = sio(server, {
 })
 app.use(cors());
 
-// app.get('/visit',(req,res)=> {   // Router เวลาเรียกใช้งาน
-//   let sql = 'SELECT * FROM opd_visit limit 10'  // คำสั่ง sql
-//   let query = db.query(sql,(err,results) => { // สั่ง Query คำสั่ง sql
-//   if(err) throw err  // ดัก error
-//   console.log(results) // แสดงผล บน Console 
-//   res.json(results)   // สร้างผลลัพธ์เป็น JSON ส่งออกไปบน Browser
-//   })
-//   })
-
 
 // compress all requests
 app.use(compression());
@@ -77,7 +68,8 @@ io.sockets.on('connection', socket => {
       socket.emit('full', room);
     }
 
-  
+  try {
+    
 
     let sql = "SELECT v.pcc_vn,v.vn,v.hn,concat(p.prefix,p.fname,' ',p.lname) as fullname,hv.div_id,concat(hv.doctor_prefix,hv.doctor_fname,' ',hv.doctor_lname) as doctor "+
               "FROM opd_visit v "+
@@ -87,9 +79,10 @@ io.sockets.on('connection', socket => {
     if(err) throw err  // ดัก error
     console.log(results) // แสดงผล บน Console 
     socket.emit('visit', results);
-
-    // res.json(results)   // สร้างผลลัพธ์เป็น JSON ส่งออกไปบน Browser
     })
+  } catch (error) {
+    console.log(error)
+  }
     // console.log(query)
 
   });
